@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android">
+
+    <group android:checkableBehavior="single">
+        <item
+            android:id="@+id/nav_customize"
+            android:icon="@drawable/customize"
+            android:title="Customize your own" />
+        <item
+            android:id="@+id/nav_featuredrinks"
+            android:icon="@drawable/coffe"
+            android:title="Feature Drinks" />
+        <item
+            android:id="@+id/nav_currentorder"
+            android:icon="@drawable/current"
+            android:title="Current Orders" />
+        <item
+            android:id="@+id/nav_my_saved"
+            android:icon="@drawable/ic_face_black_24dp"
+            android:title="My Orders" />
+    </group>
+
+    <item android:title="User">
+        <menu>
+            <item
+                android:id="@+id/nav_login"
+                android:icon="@drawable/ic_person"
+                android:title="Login" />
+            <item
+                android:id="@+id/nav_add"
+                android:icon="@drawable/ic_person_add"
+                android:title="Sign-up" />
+        </menu>
+    </item>
+
+</menu>
