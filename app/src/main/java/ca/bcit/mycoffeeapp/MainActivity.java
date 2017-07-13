@@ -1,6 +1,9 @@
 package ca.bcit.mycoffeeapp;
 
+import android.content.Intent;
+import android.graphics.Color;
 import android.os.Bundle;
+import android.support.design.widget.CoordinatorLayout;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.Snackbar;
 import android.view.View;
@@ -16,6 +19,7 @@ import android.view.MenuItem;
 public class MainActivity extends AppCompatActivity
         implements NavigationView.OnNavigationItemSelectedListener {
 
+    private Snackbar snackbar;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -71,7 +75,8 @@ public class MainActivity extends AppCompatActivity
     public boolean onNavigationItemSelected(MenuItem item) {
         // Handle navigation view item clicks here.
         int id = item.getItemId();
-
+        final View coordinator;
+        coordinator = findViewById(R.id.coordinator);
         if (id == R.id.nav_customize) {
             // Handle the camera action
         } else if (id == R.id.nav_featuredrinks) {
@@ -83,11 +88,18 @@ public class MainActivity extends AppCompatActivity
         } else if (id == R.id.nav_login) {
 
         } else if (id == R.id.nav_add) {
-
+            snackbar.make(coordinator, "Register", Snackbar.LENGTH_LONG).show();
+            //startAnActivity(Register.class);
         }
 
         DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
         drawer.closeDrawer(GravityCompat.START);
         return true;
+    }
+
+    public void startAnActivity(final Class cls) {
+        final Intent intent;
+        intent = new Intent(this, cls);
+        startActivity(intent);
     }
 }
