@@ -8,7 +8,11 @@ import android.support.v4.app.Fragment;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Button;
+import android.widget.EditText;
 import android.widget.Toast;
+
+import com.google.firebase.auth.FirebaseAuth;
 
 
 /**
@@ -22,7 +26,7 @@ import android.widget.Toast;
 public class RegisterFragment extends Fragment {
 
     private Snackbar snackbar;
-
+    private FirebaseAuth auth;
     private OnFragmentInteractionListener mListener;
 
     public RegisterFragment() {
@@ -58,11 +62,22 @@ public class RegisterFragment extends Fragment {
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
         final View view;
-        final View coordinator;
+        final Button register;
 
         view = inflater.inflate(R.layout.fragment_register, container, false);
-        coordinator = view.findViewById(R.id.coordinator);
-        snackbar.make(coordinator, "Register", Snackbar.LENGTH_LONG).show();
+        register = (Button) view.findViewById(R.id.registerNow);
+
+        register.setOnClickListener(new View.OnClickListener()
+        {
+            @Override
+            public void onClick(final View v)
+            {
+                if (mListener != null)
+                {
+                    mListener.sendInfoToFireBase();
+                }
+            }
+        });
 
         return view;
     }
@@ -102,7 +117,7 @@ public class RegisterFragment extends Fragment {
      * >Communicating with Other Fragments</a> for more information.
      */
     public interface OnFragmentInteractionListener {
-        void printMessage2();
+        void sendInfoToFireBase();
     }
 
 }

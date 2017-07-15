@@ -4,6 +4,7 @@ import android.content.Intent;
 import android.graphics.Color;
 import android.net.Uri;
 import android.os.Bundle;
+import android.support.annotation.NonNull;
 import android.support.design.widget.CoordinatorLayout;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.Snackbar;
@@ -19,6 +20,14 @@ import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.widget.EditText;
+import android.widget.ProgressBar;
+import android.widget.Toast;
+
+import com.google.android.gms.tasks.OnCompleteListener;
+import com.google.android.gms.tasks.Task;
+import com.google.firebase.auth.AuthResult;
+import com.google.firebase.auth.FirebaseAuth;
 
 public class MainActivity extends AppCompatActivity
         implements NavigationView.OnNavigationItemSelectedListener,
@@ -29,6 +38,8 @@ public class MainActivity extends AppCompatActivity
     private Fragment fragment;
     private Class fragmentClass;
     private Snackbar snackbar;
+    private ProgressBar progressBar;
+    private FirebaseAuth firebaseAuth;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -130,12 +141,39 @@ public class MainActivity extends AppCompatActivity
     }
 
     @Override
-    public void printMessage(){
+    public void sendInfoToFireBase(){
+        final EditText userEmail;
+        final EditText userPassword;
+
+
+        firebaseAuth = FirebaseAuth.getInstance();
+
+        userEmail = (EditText) findViewById(R.id.email);
+        userPassword = (EditText) findViewById(R.id.password);
+        //progressBar = (ProgressBar) findViewById(R.id.progressBar);
+
+        String email = userEmail.getText().toString().trim();
+        String password = userPassword.getText().toString().trim();
+
+        //progressBar.setVisibility(View.VISIBLE);
+
+        firebaseAuth.createUserWithEmailAndPassword(email, password)
+                    .addOnCompleteListener(MainActivity.this, new OnCompleteListener<AuthResult>() {
+                        @Override
+                        public void onComplete(@NonNull Task<AuthResult> task) {
+                            Toast.makeText(MainActivity.this, "user is created " + task.isSuccessful(), Toast.LENGTH_LONG ).show();
+                            progressBar.setVisibility(View.INVISIBLE);
+                        }
+                    });
     }
 
-    public void printMessage2() {
-
+    public void printMessage() {
+//        final View coordinator;
+//        coordinator = view.findViewById(R.id.coordinator);
+//        snackbar.make(coordinator, "Register", Snackbar.LENGTH_LONG).show();
     }
+
+
 
 }
 
