@@ -1,0 +1,150 @@
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context="ca.bcit.mycoffeeapp.DrinkDetailsFragment">
+
+
+
+    <android.support.constraint.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+        xmlns:app="http://schemas.android.com/apk/res-auto"
+        xmlns:tools="http://schemas.android.com/tools"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:clickable="true">
+
+        <TextView
+            android:id="@+id/seeCoffeeNamePlease"
+            android:layout_width="239dp"
+            android:layout_height="44dp"
+            android:layout_marginTop="16dp"
+            android:textColor="@color/colorPrimaryDark"
+            android:textSize="24sp"
+            android:textStyle="bold"
+            app:layout_constraintTop_toTopOf="parent"
+            android:layout_marginLeft="8dp"
+            app:layout_constraintLeft_toLeftOf="parent"
+            android:layout_marginRight="8dp"
+            app:layout_constraintRight_toRightOf="parent"
+            app:layout_constraintHorizontal_bias="0.304"
+            android:layout_marginStart="8dp"
+            android:layout_marginEnd="8dp" />
+
+        <TextView
+            android:id="@+id/textView3"
+            android:layout_width="201dp"
+            android:layout_height="53dp"
+            android:layout_marginLeft="40dp"
+            android:layout_marginTop="42dp"
+            android:text="Shots Selection"
+            android:textColor="@android:color/holo_blue_dark"
+            android:textSize="26sp"
+            android:textStyle="bold"
+            app:layout_constraintLeft_toLeftOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/seeCoffeeNamePlease"
+            android:layout_marginStart="40dp" />
+
+        <EditText
+            android:id="@+id/editText2"
+            style="@style/Widget.AppCompat.EditText"
+            android:layout_width="85dp"
+            android:layout_height="39dp"
+            android:background="@drawable/border"
+            android:inputType="number"
+            android:padding="20px"
+            android:text="2"
+            android:textAlignment="center"
+            android:textColor="@android:color/background_dark"
+            android:textSize="18dp"
+            android:textStyle="bold"
+            android:layout_alignTop="@+id/textView3"
+            android:layout_marginRight="8dp"
+            app:layout_constraintRight_toRightOf="parent"
+            app:layout_constraintLeft_toRightOf="@+id/textView3"
+            android:layout_marginLeft="8dp"
+            app:layout_constraintHorizontal_bias="0.325"
+            android:layout_marginTop="42dp"
+            app:layout_constraintTop_toBottomOf="@+id/seeCoffeeNamePlease"
+            android:layout_marginStart="8dp"
+            android:layout_marginEnd="8dp" />
+
+        <TextView
+            android:id="@+id/textView6"
+            android:layout_width="149dp"
+            android:layout_height="33dp"
+            android:layout_marginLeft="40dp"
+            android:layout_marginTop="33dp"
+            android:text="Temperature"
+            android:textColor="@android:color/holo_blue_dark"
+            android:textSize="24sp"
+            android:textStyle="bold"
+            app:layout_constraintLeft_toLeftOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/textView3"
+            android:layout_marginStart="40dp" />
+
+        <CheckBox
+            android:id="@+id/hot"
+            android:layout_width="87dp"
+            android:layout_height="31dp"
+            android:text="Hot"
+            android:checked="true"
+            android:textSize="20sp"
+            app:layout_constraintLeft_toRightOf="@+id/textView6"
+            android:layout_marginLeft="8dp"
+            android:layout_marginRight="8dp"
+            app:layout_constraintRight_toRightOf="parent"
+            app:layout_constraintHorizontal_bias="0.882"
+            android:layout_marginTop="47dp"
+            app:layout_constraintTop_toBottomOf="@+id/editText2"
+            android:layout_marginStart="8dp"
+            android:layout_marginEnd="8dp" />
+
+        <CheckBox
+            android:id="@+id/cold"
+            android:layout_width="87dp"
+            android:layout_height="30dp"
+            android:text="Cold"
+            android:textSize="18sp"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintLeft_toRightOf="@+id/textView6"
+            android:layout_marginLeft="8dp"
+            android:layout_marginRight="8dp"
+            app:layout_constraintRight_toRightOf="parent"
+            app:layout_constraintHorizontal_bias="0.882"
+            app:layout_constraintVertical_bias="0.498"
+            android:layout_marginStart="8dp"
+            android:layout_marginEnd="8dp" />
+
+        <TextView
+            android:id="@+id/flavours"
+            android:layout_width="101dp"
+            android:paddingTop="5px"
+            android:layout_height="34dp"
+            android:text="Flavours"
+            android:textColor="@android:color/holo_blue_dark"
+            android:textSize="24sp"
+            android:textStyle="bold"
+            android:layout_marginLeft="40dp"
+            app:layout_constraintLeft_toLeftOf="parent"
+            android:layout_marginTop="71dp"
+            app:layout_constraintTop_toBottomOf="@+id/textView6"
+            android:layout_marginStart="40dp" />
+
+        <Spinner
+            android:id="@+id/spinner2"
+            android:layout_width="194dp"
+            android:layout_height="34dp"
+            app:layout_constraintLeft_toRightOf="@+id/flavours"
+            android:layout_marginLeft="8dp"
+            android:layout_marginTop="22dp"
+            app:layout_constraintTop_toBottomOf="@+id/cold"
+            android:layout_marginRight="8dp"
+            app:layout_constraintRight_toRightOf="parent"
+            app:layout_constraintHorizontal_bias="1.0" />
+
+
+    </android.support.constraint.ConstraintLayout>
+
+</FrameLayout>

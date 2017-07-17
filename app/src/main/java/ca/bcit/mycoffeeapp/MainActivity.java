@@ -10,7 +10,9 @@ import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.Snackbar;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
+import android.text.TextUtils;
 import android.util.Log;
+import android.view.MenuInflater;
 import android.view.View;
 import android.support.design.widget.NavigationView;
 import android.support.v4.view.GravityCompat;
@@ -28,18 +30,34 @@ import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.AuthResult;
 import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseError;
+import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.ValueEventListener;
+
+import static java.security.AccessController.getContext;
 
 public class MainActivity extends AppCompatActivity
         implements NavigationView.OnNavigationItemSelectedListener,
                     MainFragment.OnFragmentInteractionListener,
-                    RegisterFragment.OnFragmentInteractionListener
-{
+                    RegisterFragment.OnFragmentInteractionListener,
+                    LoginFragment.OnFragmentInteractionListener,
+                    FeatureDrinksFragment.OnFragmentInteractionListener,
+                    DrinkDetailsFragment.OnFragmentInteractionListener
 
+{
+    private Menu menu;
+    private MenuItem menuItem;
+    private Boolean hasLoggedIn = false;
     private Fragment fragment;
     private Class fragmentClass;
     private Snackbar snackbar;
     private ProgressBar progressBar;
     private FirebaseAuth firebaseAuth;
+    private FirebaseDatabase firebaseDatabase;
+
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -48,7 +66,8 @@ public class MainActivity extends AppCompatActivity
         setSupportActionBar(toolbar);
 
         if (savedInstanceState == null) {
-            initFragment();
+            fragmentClass = LoginFragment.class;
+            initFragment(fragmentClass);
         }
 
         DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
@@ -58,7 +77,11 @@ public class MainActivity extends AppCompatActivity
         toggle.syncState();
 
         NavigationView navigationView = (NavigationView) findViewById(R.id.nav_view);
+
         navigationView.setNavigationItemSelectedListener(this);
+
+        firebaseAuth = FirebaseAuth.getInstance();
+        firebaseDatabase = FirebaseDatabase.getInstance();
     }
 
     @Override
@@ -75,8 +98,9 @@ public class MainActivity extends AppCompatActivity
     public boolean onCreateOptionsMenu(Menu menu) {
         // Inflate the menu; this adds items to the action bar if it is present.
         getMenuInflater().inflate(R.menu.main, menu);
-        return true;
+        return super.onCreateOptionsMenu(menu);
     }
+
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
@@ -90,9 +114,9 @@ public class MainActivity extends AppCompatActivity
             return true;
         }
 
-
         return super.onOptionsItemSelected(item);
     }
+
 
     @SuppressWarnings("StatementWithEmptyBody")
     @Override
@@ -101,16 +125,14 @@ public class MainActivity extends AppCompatActivity
         int id = item.getItemId();
         fragment = null;
 
-        if (id == R.id.nav_customize) {
-            // Handle the camera action
-        } else if (id == R.id.nav_featuredrinks) {
-
+        if (id == R.id.nav_featuredrinks) {
+            fragmentClass = FeatureDrinksFragment.class;
         } else if (id == R.id.nav_currentorder) {
 
         } else if (id == R.id.nav_my_saved) {
 
         } else if (id == R.id.nav_login) {
-
+            fragmentClass = LoginFragment.class;
         } else if (id == R.id.nav_add) {
             fragmentClass = RegisterFragment.class;
         }
@@ -127,10 +149,10 @@ public class MainActivity extends AppCompatActivity
         return true;
     }
 
-    public void initFragment() {
+    public void initFragment(Class fragClass) {
 
         fragment = null;
-        fragmentClass = MainFragment.class;
+        fragmentClass = fragClass;
         try {
             fragment = (Fragment) fragmentClass.newInstance();
         } catch (Exception e) {
@@ -144,16 +166,16 @@ public class MainActivity extends AppCompatActivity
     public void sendInfoToFireBase(){
         final EditText userEmail;
         final EditText userPassword;
+        final EditText userName;
 
-
-        firebaseAuth = FirebaseAuth.getInstance();
-
+        userName = (EditText) findViewById(R.id.nameText);
         userEmail = (EditText) findViewById(R.id.email);
         userPassword = (EditText) findViewById(R.id.password);
         //progressBar = (ProgressBar) findViewById(R.id.progressBar);
 
-        String email = userEmail.getText().toString().trim();
-        String password = userPassword.getText().toString().trim();
+        final String name = userName.getText().toString().trim();
+        final String email = userEmail.getText().toString().trim();
+        final String password = userPassword.getText().toString().trim();
 
         //progressBar.setVisibility(View.VISIBLE);
 
@@ -161,8 +183,15 @@ public class MainActivity extends AppCompatActivity
                     .addOnCompleteListener(MainActivity.this, new OnCompleteListener<AuthResult>() {
                         @Override
                         public void onComplete(@NonNull Task<AuthResult> task) {
-                            Toast.makeText(MainActivity.this, "user is created " + task.isSuccessful(), Toast.LENGTH_LONG ).show();
-                            progressBar.setVisibility(View.INVISIBLE);
+                            // Handle sign-in auth success/fail
+                            generateUser(name, email, password);
+                            if (task.isSuccessful()) {
+                                final Intent intent;
+                                intent = new Intent(MainActivity.this, RegistrationSuccess.class);
+                                startActivity(intent);
+                            } else {
+                                Toast.makeText(MainActivity.this, "Creation Failed", Toast.LENGTH_LONG).show();
+                            }
                         }
                     });
     }
@@ -174,6 +203,78 @@ public class MainActivity extends AppCompatActivity
     }
 
 
+    @Override
+    public void userLogin() {
+        final EditText userEmail;
+        final EditText userPassword;
+        final String email;
+        final String password;
 
+        userEmail = (EditText) findViewById(R.id.userEmailInput);
+        userPassword = (EditText) findViewById(R.id.userPasswordInput);
+
+        email = userEmail.getText().toString();
+        password = userPassword.getText().toString();
+
+        // Make sure user enter all info
+        if(TextUtils.isEmpty(email) || TextUtils.isEmpty(password)) {
+            Toast.makeText(getApplicationContext(), "Please Fill in All Fields", Toast.LENGTH_LONG).show();
+        } else {
+            firebaseAuth.signInWithEmailAndPassword(email, password)
+                    .addOnCompleteListener(MainActivity.this, new OnCompleteListener<AuthResult>() {
+                        @Override
+                        public void onComplete(@NonNull Task<AuthResult> task) {
+                            if(!task.isSuccessful()) {
+                                Toast.makeText(getApplicationContext(), "Please enter valid credentials", Toast.LENGTH_LONG).show();
+                            } else {
+                                updateUiAfterLogin();
+                                fragmentClass = MainFragment.class;
+                                initFragment(fragmentClass);
+
+                            }
+                        }
+                    });
+        }
+
+    }
+
+    public void updateUiAfterLogin() {
+        final String email;
+        DatabaseReference ref = firebaseDatabase.getReference("users");
+        NavigationView navigationView = (NavigationView) findViewById(R.id.nav_view);
+        menu = navigationView.getMenu();
+        menuItem = menu.findItem(R.id.nav_login);
+        email = firebaseAuth.getCurrentUser().getEmail();
+        ref.addValueEventListener(new ValueEventListener() {
+            @Override
+            public void onDataChange(DataSnapshot dataSnapshot) {
+                if (email != null) {
+                    for (DataSnapshot postSnapShot: dataSnapshot.getChildren()) {
+                        User user = postSnapShot.getValue(User.class);
+                        if (user.getUserEmail().equals(email)) {
+                            menuItem.setTitle(user.getUserName());
+                        }
+                    }
+                }
+            }
+
+            @Override
+            public void onCancelled(DatabaseError databaseError) {
+                System.out.println("The read failed: " + databaseError.getMessage());
+            }
+        });
+    }
+
+    public void generateUser(String userName, String userEmail, String userPassword) {
+        DatabaseReference ref = firebaseDatabase.getReference("users"); //users is a node in your Firebase Database.
+        User user = new User(userName, userEmail, userPassword); //ObjectClass for Users
+        ref.push().setValue(user);
+    }
+
+
+    @Override
+    public void onFragmentInteraction(Uri uri) {
+
+    }
 }
 

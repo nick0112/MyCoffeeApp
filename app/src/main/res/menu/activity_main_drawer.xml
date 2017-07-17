@@ -3,10 +3,6 @@
 
     <group android:checkableBehavior="single">
         <item
-            android:id="@+id/nav_customize"
-            android:icon="@drawable/customize"
-            android:title="Customize your own" />
-        <item
             android:id="@+id/nav_featuredrinks"
             android:icon="@drawable/coffe"
             android:title="Feature Drinks" />
