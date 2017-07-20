@@ -29,15 +29,15 @@ public class FeatureDrinksFragment extends ListFragment {
 
     private OnFragmentInteractionListener mListener;
     private String[] coffeeList = new String[] {
-            Coffee.AMERICANO.toString(),
-            Coffee.CAPPUCCINO.toString(),
-            Coffee.CHAILATTE.toString(),
-            Coffee.ESPRESSO.toString(),
-            Coffee.FLATWHITE.toString(),
-            Coffee.LATTE.toString(),
-            Coffee.LONDONFOG.toString(),
-            Coffee.MOCHA.toString(),
-            Coffee.MACCHIATO.toString()
+            "Americano",
+            "Cappuccino",
+            "Chailatte",
+            "Espresso",
+            "Flatwhite",
+            "Latte",
+            "London Fog",
+            "Mocha",
+            "Macchiato"
     };
 
     public FeatureDrinksFragment() {
@@ -75,13 +75,7 @@ public class FeatureDrinksFragment extends ListFragment {
         view = inflater.inflate(R.layout.fragment_feature_drinks, container, false);
         return view;
     }
-
-    // TODO: Rename method, update argument and hook method into UI event
-    public void onButtonPressed(Uri uri) {
-        if (mListener != null) {
-            mListener.onFragmentInteraction(uri);
-        }
-    }
+    
 
     @Override
     public void onAttach(Context context) {
@@ -126,7 +120,6 @@ public class FeatureDrinksFragment extends ListFragment {
 
     @Override
     public void onListItemClick (ListView l, View v, int position, long id) {
-        Toast.makeText(getActivity(), "Item: " + position, Toast.LENGTH_SHORT).show();
         String coffeeSelected = coffeeList[position];
         DrinkDetailsFragment df = new DrinkDetailsFragment();
         Bundle args = new Bundle();

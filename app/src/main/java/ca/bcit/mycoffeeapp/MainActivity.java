@@ -22,8 +22,13 @@ import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.widget.CheckBox;
 import android.widget.EditText;
+import android.widget.ListView;
 import android.widget.ProgressBar;
+import android.widget.SimpleAdapter;
+import android.widget.Spinner;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import com.google.android.gms.tasks.OnCompleteListener;
@@ -36,6 +41,11 @@ import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
 
+import org.w3c.dom.Text;
+
+import java.util.ArrayList;
+import java.util.HashMap;
+
 import static java.security.AccessController.getContext;
 
 public class MainActivity extends AppCompatActivity
@@ -44,10 +54,15 @@ public class MainActivity extends AppCompatActivity
                     RegisterFragment.OnFragmentInteractionListener,
                     LoginFragment.OnFragmentInteractionListener,
                     FeatureDrinksFragment.OnFragmentInteractionListener,
-                    DrinkDetailsFragment.OnFragmentInteractionListener
+                    DrinkDetailsFragment.OnFragmentInteractionListener,
+                    CurrentOrdersFragment.OnFragmentInteractionListener,
+                    MyOrderFragment.OnFragmentInteractionListener
+
+
 
 {
     private Menu menu;
+    private String currentUserName;
     private MenuItem menuItem;
     private Boolean hasLoggedIn = false;
     private Fragment fragment;
@@ -56,6 +71,7 @@ public class MainActivity extends AppCompatActivity
     private ProgressBar progressBar;
     private FirebaseAuth firebaseAuth;
     private FirebaseDatabase firebaseDatabase;
+
 
 
     @Override
@@ -80,6 +96,7 @@ public class MainActivity extends AppCompatActivity
 
         navigationView.setNavigationItemSelectedListener(this);
 
+        currentUserName = "Guest";
         firebaseAuth = FirebaseAuth.getInstance();
         firebaseDatabase = FirebaseDatabase.getInstance();
     }
@@ -124,15 +141,21 @@ public class MainActivity extends AppCompatActivity
         // Handle navigation view item clicks here.
         int id = item.getItemId();
         fragment = null;
+//        Intent intent;
+//        intent = new Intent(MainActivity.this, CurrentOrders.class);
 
         if (id == R.id.nav_featuredrinks) {
             fragmentClass = FeatureDrinksFragment.class;
         } else if (id == R.id.nav_currentorder) {
-
+            fragmentClass = CurrentOrdersFragment.class;
         } else if (id == R.id.nav_my_saved) {
-
+            fragmentClass = MyOrderFragment.class;
         } else if (id == R.id.nav_login) {
-            fragmentClass = LoginFragment.class;
+            if (currentUserName.equals("Guest")) {
+                fragmentClass = LoginFragment.class;
+            } else {
+                fragmentClass = MyOrderFragment.class;
+            }
         } else if (id == R.id.nav_add) {
             fragmentClass = RegisterFragment.class;
         }
@@ -178,8 +201,10 @@ public class MainActivity extends AppCompatActivity
         final String password = userPassword.getText().toString().trim();
 
         //progressBar.setVisibility(View.VISIBLE);
-
-        firebaseAuth.createUserWithEmailAndPassword(email, password)
+        if(TextUtils.isEmpty(email) || TextUtils.isEmpty(password) || TextUtils.isEmpty(name)) {
+            Toast.makeText(getApplicationContext(), "Please Fill in All 3 Fields", Toast.LENGTH_LONG).show();
+        } else {
+            firebaseAuth.createUserWithEmailAndPassword(email, password)
                     .addOnCompleteListener(MainActivity.this, new OnCompleteListener<AuthResult>() {
                         @Override
                         public void onComplete(@NonNull Task<AuthResult> task) {
@@ -194,6 +219,7 @@ public class MainActivity extends AppCompatActivity
                             }
                         }
                     });
+        }
     }
 
     public void printMessage() {
@@ -228,7 +254,7 @@ public class MainActivity extends AppCompatActivity
                                 Toast.makeText(getApplicationContext(), "Please enter valid credentials", Toast.LENGTH_LONG).show();
                             } else {
                                 updateUiAfterLogin();
-                                fragmentClass = MainFragment.class;
+                                fragmentClass = FeatureDrinksFragment.class;
                                 initFragment(fragmentClass);
 
                             }
@@ -240,6 +266,8 @@ public class MainActivity extends AppCompatActivity
 
     public void updateUiAfterLogin() {
         final String email;
+        final TextView textView;
+        textView = (TextView) findViewById(R.id.welcome);
         DatabaseReference ref = firebaseDatabase.getReference("users");
         NavigationView navigationView = (NavigationView) findViewById(R.id.nav_view);
         menu = navigationView.getMenu();
@@ -253,6 +281,8 @@ public class MainActivity extends AppCompatActivity
                         User user = postSnapShot.getValue(User.class);
                         if (user.getUserEmail().equals(email)) {
                             menuItem.setTitle(user.getUserName());
+                            currentUserName = user.getUserName();
+                            textView.setText("Good Morning " + currentUserName);
                         }
                     }
                 }
@@ -274,6 +304,52 @@ public class MainActivity extends AppCompatActivity
 
     @Override
     public void onFragmentInteraction(Uri uri) {
+
+    }
+
+    @Override
+    public void orderDrink() {
+        DatabaseReference ref = firebaseDatabase.getReference("Orders");
+        Drink drink;
+        Order order;
+        String   coffeeName;
+        int shots;
+        String temperature;
+        String flavours;
+        String milkType;
+
+        TextView textCoffeeName = (TextView) findViewById(R.id.seeCoffeeNamePlease);
+        EditText shotsSelected = (EditText) findViewById(R.id.shotSelection);
+        Spinner milkSpinner = (Spinner) findViewById(R.id.milktype);
+        Spinner flavourSpinner = (Spinner) findViewById(R.id.flavours);
+
+        CheckBox hotSelected = (CheckBox) findViewById(R.id.hot);
+        //CheckBox coldSelected = (CheckBox) findViewById(R.id.cold);
+
+        if (hotSelected.isEnabled()) {
+            temperature = "Hot";
+        } else {
+            temperature = "Cold";
+        }
+
+        coffeeName = textCoffeeName.getText().toString().trim();
+        shots = Integer.parseInt(shotsSelected.getText().toString());
+        flavours = flavourSpinner.getSelectedItem().toString().trim();
+        milkType = milkSpinner.getSelectedItem().toString().trim();
+
+        drink = new Drink (coffeeName, shots, flavours, temperature, milkType);
+        order = new Order (currentUserName, drink);
+
+        ref.push().setValue(order);
+
+
+        fragmentClass = CurrentOrdersFragment.class;
+        initFragment(fragmentClass);
+
+    }
+
+    @Override
+    public void displayMyCoffeeInfo() {
 
     }
 }

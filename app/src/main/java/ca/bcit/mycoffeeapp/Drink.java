@@ -6,25 +6,17 @@ package ca.bcit.mycoffeeapp;
 
 public class Drink {
 
-    private Coffee drinkName;
+    private String drinkName;
     private int shots;
-    private Flavour flavour;
-    private boolean hotOrCold;
-    private MilkType milkType;
+    private String flavour;
+    private String hotOrCold;
+    private String milkType;
 
     public Drink() {
 
     }
 
-    /**
-     * Drink Constructor
-     * @param drinkName
-     * @param shots shots can vary, default should be 2.
-     * @param flavour
-     * @param hotOrCold Hot = 1 , cold = 0
-     * @param milkType
-     */
-    public Drink (Coffee drinkName, int shots, Flavour flavour, boolean hotOrCold, MilkType milkType) {
+    public Drink(String drinkName, int shots, String flavour, String hotOrCold, String milkType) {
         this.drinkName = drinkName;
         this.shots = shots;
         this.flavour = flavour;
@@ -32,12 +24,11 @@ public class Drink {
         this.milkType = milkType;
     }
 
-
-    public Coffee getDrinkName() {
+    public String getDrinkName() {
         return drinkName;
     }
 
-    public void setDrinkName(Coffee drinkName) {
+    public void setDrinkName(String drinkName) {
         this.drinkName = drinkName;
     }
 
@@ -49,31 +40,27 @@ public class Drink {
         this.shots = shots;
     }
 
-    public Flavour getFlavour() {
+    public String getFlavour() {
         return flavour;
     }
 
-    public void setFlavour(Flavour flavour) {
+    public void setFlavour(String flavour) {
         this.flavour = flavour;
     }
 
-    public boolean isHotOrCold() {
+    public String getHotOrCold() {
         return hotOrCold;
     }
 
-    public void setHotOrCold(boolean hotOrCold) {
+    public void setHotOrCold(String hotOrCold) {
         this.hotOrCold = hotOrCold;
     }
 
-    public MilkType getMilkType() {
+    public String getMilkType() {
         return milkType;
     }
 
-    public void setMilkType(MilkType milkType) {
+    public void setMilkType(String milkType) {
         this.milkType = milkType;
     }
-
-
-
-
 }

@@ -7,6 +7,9 @@ import android.support.v4.app.Fragment;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ArrayAdapter;
+import android.widget.Button;
+import android.widget.Spinner;
 import android.widget.TextView;
 
 
@@ -24,6 +27,22 @@ public class DrinkDetailsFragment extends Fragment {
 
 
     private OnFragmentInteractionListener mListener;
+    private String[] flavours = new String[] {
+            "Caramel",
+            "Cinnamon",
+            "Hazelnut",
+            "None",
+            "Peppermint",
+            "Vanilla",
+    };
+    private String[] milkType = new String[] {
+            "Almond",
+            "Double",
+            "Milk",
+            "Soy",
+            "Whole"
+    };
+
 
     public DrinkDetailsFragment() {
         // Required empty public constructor
@@ -58,21 +77,42 @@ public class DrinkDetailsFragment extends Fragment {
                              Bundle savedInstanceState) {
         final View view;
         final TextView testing;
-        final String testingString;
+        final Spinner flavourSpinner;
+        final Spinner milkTypeSpinner;
+        final ArrayAdapter<String> flavourAdapter;
+        final ArrayAdapter<String>  milkAdapter;
+        final Button button;
         view = inflater.inflate(R.layout.fragment_drink_details, container, false);
+        button = (Button) view.findViewById(R.id.order);
+        button.setOnClickListener(new View.OnClickListener()
+        {
+            @Override
+            public void onClick(final View v)
+            {
+                if (mListener != null)
+                {
+                    mListener.orderDrink();
+                }
+            }
+        });
+        final String testingString;
         testing = (TextView) view.findViewById(R.id.seeCoffeeNamePlease);
+        flavourSpinner = (Spinner) view.findViewById(R.id.flavours);
+        milkTypeSpinner = (Spinner) view.findViewById(R.id.milktype);
         testingString = getArguments().getString("COFFEE_NAME");
         testing.setText(testingString);
-
+        flavourAdapter = new ArrayAdapter<String>(getActivity(), android.R.layout.simple_spinner_dropdown_item, flavours);
+        milkAdapter = new ArrayAdapter<String>(getActivity(), android.R.layout.simple_spinner_dropdown_item, milkType);
+        flavourAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+        milkAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+        flavourSpinner.setAdapter(flavourAdapter);
+        milkTypeSpinner.setAdapter(milkAdapter);
+        flavourSpinner.setSelection(3);
+        milkTypeSpinner.setSelection(2);
         return view;
     }
 
-    // TODO: Rename method, update argument and hook method into UI event
-    public void onButtonPressed(Uri uri) {
-        if (mListener != null) {
-            mListener.onFragmentInteraction(uri);
-        }
-    }
+
 
     @Override
     public void onAttach(Context context) {
@@ -103,6 +143,6 @@ public class DrinkDetailsFragment extends Fragment {
      */
     public interface OnFragmentInteractionListener {
         // TODO: Update argument type and name
-        void onFragmentInteraction(Uri uri);
+        void orderDrink();
     }
 }
